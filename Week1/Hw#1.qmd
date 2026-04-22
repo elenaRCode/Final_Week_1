@@ -1,0 +1,87 @@
+---
+title: "Hw#1"
+Author: Elena Nirgiotis  
+Date: 4-16-2026
+format: html
+editor: visual 
+---
+
+<style>
+
+## Quarto
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+library(here)
+library(tidyverse)
+library(janitor)
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+
+#load data
+sc_forest_data<-read.csv(here("Data","p301.csv"))
+
+#calculate yearly averages for temperature & NPP
+yearly_data <- sc_forest_data |>
+  group_by(year) |>
+  summarise(
+    avg_tmax = mean(tmax, na.rm = TRUE),
+    avg_NPP = mean(NPP, na.rm = TRUE), .groups = "drop") 
+
+
+#plot 1:temperature over time 
+p1 <- ggplot(yearly_data, aes(x = year, y = avg_tmax)) +
+  geom_line() +
+  labs(
+    title = "Average Maximum Temperature",
+    x = "Year",
+    y = "Temperature (°C)") +
+  theme_minimal()
+
+#plot 2: NPP over time 
+p2 <- ggplot(yearly_data, aes(x = year, y = avg_NPP)) +
+  geom_line() +
+  labs(
+    title = "Average NPP",
+    x = "Year",
+    y = "NPP (kgC/m²/day)") +
+  theme_minimal()
+
+#display plots
+p1 + p2
+
+```
+
+You can add options to executable code like this
+
+```{r}
+# calculate correlation coefficient (r) between temperature and NPP
+cor(yearly_data$avg_tmax, yearly_data$avg_NPP)
+
+# run correlation test to get r and p-value (test for significance)
+cor.test(yearly_data$avg_tmax, yearly_data$avg_NPP)
+
+#linear reg
+linear_forest <- lm(NPP ~ tmax, data = sc_forest_data) 
+
+summary(linear_forest)
+                      
+#create scatterplot to visualize relationship between temperature and NPP
+ggplot(yearly_data, aes(x = avg_tmax, y = avg_NPP)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    title = "Relationship Between Temperature and NPP",
+    x = "Average Maximum Temperature (°C)",
+    y = "Average NPP (kgC/m²/day)") +
+  theme_minimal()
+
+
+
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
