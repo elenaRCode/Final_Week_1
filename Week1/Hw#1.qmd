@@ -86,3 +86,5 @@ ggplot(yearly_data, aes(x = avg_tmax, y = avg_NPP)) +
 ```
 
 The `echo: false` option disables the printing of code (only output is displayed).
+
+**emma**
